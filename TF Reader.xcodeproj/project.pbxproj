@@ -12,6 +12,7 @@
 		801085BD1D72844500FE4459 /* BlogPost.swift in Sources */ = {isa = PBXBuildFile; fileRef = 801085BC1D72844500FE4459 /* BlogPost.swift */; };
 		801085BF1D72900900FE4459 /* PostViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 801085BE1D72900900FE4459 /* PostViewController.swift */; };
 		8013229D1E7F3C66001C823A /* Alamofire.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8013229C1E7F3C66001C823A /* Alamofire.framework */; };
+		8017716B1E834A5A00C4A23D /* Kanna.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8017716A1E834A5A00C4A23D /* Kanna.framework */; };
 		803009AE1E7F45D800C4FA83 /* SwiftyJSON.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 803009AD1E7F45D800C4FA83 /* SwiftyJSON.framework */; };
 		80BCDEC51D6CFCCF00744164 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 80BCDEC41D6CFCCF00744164 /* AppDelegate.swift */; };
 		80BCDECA1D6CFCCF00744164 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 80BCDEC81D6CFCCF00744164 /* Main.storyboard */; };
@@ -47,6 +48,7 @@
 		801085BE1D72900900FE4459 /* PostViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PostViewController.swift; sourceTree = "<group>"; };
 		8013229C1E7F3C66001C823A /* Alamofire.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Alamofire.framework; path = "../../../Library/Developer/Xcode/DerivedData/TF_Reader-gmmhmfxxhdduypgqtfldyuwhenxi/Build/Products/Debug-iphonesimulator/Alamofire/Alamofire.framework"; sourceTree = "<group>"; };
 		8013229E1E7F3C6A001C823A /* Kanna.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Kanna.framework; path = "../../../Library/Developer/Xcode/DerivedData/TF_Reader-gmmhmfxxhdduypgqtfldyuwhenxi/Build/Products/Debug-iphonesimulator/Kanna/Kanna.framework"; sourceTree = "<group>"; };
+		8017716A1E834A5A00C4A23D /* Kanna.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Kanna.framework; path = "../../../Library/Developer/Xcode/DerivedData/TF_Reader-gmmhmfxxhdduypgqtfldyuwhenxi/Build/Products/Debug-iphoneos/Kanna/Kanna.framework"; sourceTree = "<group>"; };
 		803009AD1E7F45D800C4FA83 /* SwiftyJSON.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftyJSON.framework; path = "../../../Library/Developer/Xcode/DerivedData/TF_Reader-gmmhmfxxhdduypgqtfldyuwhenxi/Build/Products/Debug-iphonesimulator/SwiftyJSON/SwiftyJSON.framework"; sourceTree = "<group>"; };
 		80BCDEC11D6CFCCF00744164 /* TF Reader.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "TF Reader.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		80BCDEC41D6CFCCF00744164 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -69,6 +71,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8017716B1E834A5A00C4A23D /* Kanna.framework in Frameworks */,
 				803009AE1E7F45D800C4FA83 /* SwiftyJSON.framework in Frameworks */,
 				8013229D1E7F3C66001C823A /* Alamofire.framework in Frameworks */,
 				582E6F0EFD544F87DDF2D3F4 /* Pods_TF_Reader.framework in Frameworks */,
@@ -95,6 +98,7 @@
 		09586A22F9168B9504148A4F /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				8017716A1E834A5A00C4A23D /* Kanna.framework */,
 				803009AD1E7F45D800C4FA83 /* SwiftyJSON.framework */,
 				8013229E1E7F3C6A001C823A /* Kanna.framework */,
 				8013229C1E7F3C66001C823A /* Alamofire.framework */,

@@ -9,6 +9,7 @@
 import UIKit
 import Alamofire
 import SwiftyJSON
+import Kanna
 
 
 class TFTableViewController: UITableViewController, XMLParserDelegate {
@@ -22,11 +23,13 @@ class TFTableViewController: UITableViewController, XMLParserDelegate {
     var eName: String = String()
     var imageLink: String = String()
     var postDate: String = String()
+    var storyTitle: String! = String()
+    var storyTitles = [String]()
     var imageLinks = [String]() // Remove this and append image urls to the blogpost class
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        let url:URL = URL(string: "https://feeds.feedburner.com/TorrentFreak/")!
+        let url: URL = URL(string: "https://feeds.feedburner.com/TorrentFreak/")!
         parser = XMLParser(contentsOf: url)!
         parser.delegate = self
         parser.parse()
@@ -54,11 +57,11 @@ class TFTableViewController: UITableViewController, XMLParserDelegate {
         if(!data.isEmpty){
             if eName == "title" {
                 postTitle += data
-            }else if eName == "link" {
+            } else if eName == "link" {
                 postLink += data
-            }else if eName == "pubDate" {
+            } else if eName == "pubDate" {
                 postDate += data
-            }else if eName == "content:encoded" {
+            } else if eName == "content:encoded" {
                 postContent += data
             }
         }
@@ -92,6 +95,7 @@ class TFTableViewController: UITableViewController, XMLParserDelegate {
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath) as! CustomTableViewCell
+        var index = 0
         
         let blogPost: BlogPost = blogPosts[indexPath.row]
         cell.titleLabel.text = blogPost.postTitle
@@ -100,13 +104,27 @@ class TFTableViewController: UITableViewController, XMLParserDelegate {
         let styledDateText = styleDate(date: blogPost.postDate)
         cell.dateLabel.text = styledDateText
 
-        
-        if imageLinks.count != 0 {
-            let imageLink = URL(string: imageLinks[indexPath.row])
-            let data = try? Data(contentsOf: imageLink!)
-            cell.backgroundImage.image = UIImage(data: data!)
+        while index < (self.imageLinks.count) {
+            if blogPost.postTitle == self.storyTitles[index] {
+                print("\(index)")
+                blogPost.postImageLink = self.imageLinks[index]
+                index = 0
+                break
+            } else {
+                index += 1
+            }
         }
         
+        if imageLinks.count != 0 {
+            let imageLink = URL(string: blogPost.postImageLink)
+            print("\(imageLink)")
+            let data = try? Data(contentsOf: imageLink!)
+            
+            if data != nil {
+                cell.backgroundImage.image = UIImage(data: data!)
+            }
+        }
+
         
         return cell
     }
@@ -118,7 +136,6 @@ class TFTableViewController: UITableViewController, XMLParserDelegate {
         if segue.identifier == "viewpost" {
             let selectedRow = (tableView.indexPathForSelectedRow as NSIndexPath?)?.row
             let blogPost: BlogPost = blogPosts[selectedRow!]
-            //print("User selected \(selectedRow) and this stuff: \(blogPost.postTitle)")
             let viewController = segue.destination as! PostViewController
             viewController.postLink = blogPost.postLink
         }
@@ -172,7 +189,9 @@ class TFTableViewController: UITableViewController, XMLParserDelegate {
                         let json = JSON(value)
                         DispatchQueue.main.async {
                             imageLink = json["lead_image_url"].string
+                            self.storyTitle = json["title"].string
                             if imageLink != nil {
+                                self.storyTitles.append(self.storyTitle)
                                 self.imageLinks.append(imageLink)
                             }
                             else if imageLink == nil {
