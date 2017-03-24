@@ -106,7 +106,7 @@ class TFTableViewController: UITableViewController, XMLParserDelegate {
 
         while index < (self.imageLinks.count) {
             if blogPost.postTitle == self.storyTitles[index] {
-                print("\(index)")
+                print("The index is: \(index)")
                 blogPost.postImageLink = self.imageLinks[index]
                 index = 0
                 break
@@ -116,15 +116,22 @@ class TFTableViewController: UITableViewController, XMLParserDelegate {
         }
         
         if imageLinks.count != 0 {
+            print(blogPost.postImageLink)
             let imageLink = URL(string: blogPost.postImageLink)
-            print("\(imageLink)")
-            let data = try? Data(contentsOf: imageLink!)
+            print("Link: \(imageLink)")
             
-            if data != nil {
-                cell.backgroundImage.image = UIImage(data: data!)
+            if let hereIsTheLinkGoodSir = imageLink {
+                let data = try? Data(contentsOf: hereIsTheLinkGoodSir)
+                if data != nil {
+                    cell.backgroundImage.image = UIImage(data: data!)
+                }
             }
+        } else {
+            print("Failed to use image link")
+            let xData = URL(string: "https://www.torrentfreak.com/images/keyboardfeat.jpg")
+            let data = try? Data(contentsOf: xData!)
+            cell.backgroundImage.image = UIImage(data: data!)
         }
-
         
         return cell
     }
