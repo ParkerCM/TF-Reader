@@ -16,10 +16,10 @@ class CustomTableViewCell: UITableViewCell {
     
     override func awakeFromNib() {
         super.awakeFromNib()
-        // Initialization code
         
         titleLabel.textColor = UIColor(white: 1.00, alpha: 1.00)
         dateLabel.textColor = UIColor(white: 1.00, alpha: 1.00)
+        //backgroundImage.image = #imageLiteral(resourceName: "keyboard")
     }
 
     override func setSelected(_ selected: Bool, animated: Bool) {

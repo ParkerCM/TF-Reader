@@ -14,12 +14,14 @@ class PostViewController: UIViewController, UIWebViewDelegate {
     @IBOutlet var activityIndicator: UIActivityIndicatorView!
 
     var postLink: String = String()
+    var postHTML: String = String()
     
     override func viewDidLoad(){
         super.viewDidLoad()
-        let url: URL = URL(string: postLink)!
-        let request: URLRequest = URLRequest(url: url)
-        webView.loadRequest(request)
+        //let url: URL = URL(string: postLink)!
+        //let request: URLRequest = URLRequest(url: url)
+        webView.loadHTMLString(postHTML, baseURL: nil)
+        //webView.loadRequest(request)
         webView.delegate = self
     }
     
