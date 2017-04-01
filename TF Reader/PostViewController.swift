@@ -18,11 +18,13 @@ class PostViewController: UIViewController, UIWebViewDelegate {
     
     override func viewDidLoad(){
         super.viewDidLoad()
-        //let url: URL = URL(string: postLink)!
-        //let request: URLRequest = URLRequest(url: url)
         webView.loadHTMLString(postHTML, baseURL: nil)
-        //webView.loadRequest(request)
         webView.delegate = self
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        navigationController?.hidesBarsOnSwipe = false
     }
     
     func webViewDidStartLoad(_ webView: UIWebView){

@@ -14,7 +14,6 @@ import Kanna
 
 class TFTableViewController: UITableViewController, XMLParserDelegate {
     
-
     var parser: XMLParser = XMLParser()
     var blogPosts:[BlogPost] = []
     var postTitle: String = String()
@@ -34,6 +33,8 @@ class TFTableViewController: UITableViewController, XMLParserDelegate {
         parser = XMLParser(contentsOf: url)!
         parser.delegate = self
         parser.parse()
+        self.tableView.isHidden = false
+        setNavImage()
         
         for i in blogPosts{
             parseWithMercury(articleLink: i.postLink)
@@ -49,7 +50,6 @@ class TFTableViewController: UITableViewController, XMLParserDelegate {
             postTitle = String()
             postLink = String()
             postDate = String()
-            //postContent = String()
         }
     }
     
@@ -62,9 +62,7 @@ class TFTableViewController: UITableViewController, XMLParserDelegate {
                 postLink += data
             } else if eName == "pubDate" {
                 postDate += data
-            } //else if eName == "content:encoded" {
-                //postContent += data
-            //}
+            }
         }
     }
     
@@ -74,7 +72,6 @@ class TFTableViewController: UITableViewController, XMLParserDelegate {
             blogPost.postTitle = postTitle
             blogPost.postLink = postLink
             blogPost.postDate = postDate
-            //blogPost.postContent = postContent
             blogPosts.append(blogPost)
         }
     }
@@ -109,6 +106,20 @@ class TFTableViewController: UITableViewController, XMLParserDelegate {
         
         let styledDateText = styleDate(date: blogPost.postDate)
         cell.dateLabel.text = styledDateText
+        
+        if self.imageLinks.count < 10{
+            cell.isNotLoaded()
+        } else {
+            cell.isLoaded()
+            for i in blogPosts{
+                print(i.postTitle)
+            }
+            print("\n\n\n")
+            for i in storyTitles {
+                print(i)
+            }
+            print("\n\n\n\n")
+        }
 
         while index < (self.imageLinks.count) {
             if blogPost.postTitle == self.storyTitles[index] {
@@ -135,9 +146,6 @@ class TFTableViewController: UITableViewController, XMLParserDelegate {
             }
         } else {
             print("Failed to use image link")
-            //let xData = URL(string: "https://www.torrentfreak.com/images/keyboardfeat.jpg")
-            //let data = try? Data(contentsOf: xData!)
-            //cell.backgroundImage.image = UIImage(data: data!)
             cell.backgroundImage.image = #imageLiteral(resourceName: "keyboard")
             cell.backgroundImage.contentMode = UIViewContentMode.scaleAspectFill
         }
@@ -153,9 +161,7 @@ class TFTableViewController: UITableViewController, XMLParserDelegate {
             let selectedRow = (tableView.indexPathForSelectedRow as NSIndexPath?)?.row
             let blogPost: BlogPost = blogPosts[selectedRow!]
             let viewController = segue.destination as! PostViewController
-            //viewController.postLink = blogPost.postLink
             viewController.postHTML = createHTMLForArticle(post: blogPost)
-            //print("\(blogPost.postContent)")
         }
     }
 
@@ -228,7 +234,6 @@ class TFTableViewController: UITableViewController, XMLParserDelegate {
                 else if response.result.isFailure {
                     print("Error: \(String(describing: response.error))")
                 }
-                
         }
     }
     
@@ -248,6 +253,10 @@ class TFTableViewController: UITableViewController, XMLParserDelegate {
         print("Here is the replaced text: \(var6)")
         
         return finishedhtml
+    }
+    
+    func setNavImage() -> Void {
+        navigationItem.titleView = UIImageView(image: #imageLiteral(resourceName: "tfNavBar"))
     }
 }
 

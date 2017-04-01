@@ -10,6 +10,8 @@ import UIKit
 
 class CustomTableViewCell: UITableViewCell {
 
+    @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
+    @IBOutlet weak var Shield: UIView!
     @IBOutlet weak var titleLabel: UILabel!
     @IBOutlet weak var dateLabel: UILabel!
     @IBOutlet weak var backgroundImage: UIImageView!
@@ -26,6 +28,16 @@ class CustomTableViewCell: UITableViewCell {
         super.setSelected(selected, animated: animated)
 
         // Configure the view for the selected state
+    }
+    
+    func isNotLoaded() -> Void {
+        activityIndicator.startAnimating()
+        Shield.isHidden = false
+    }
+    
+    func isLoaded() -> Void{
+        activityIndicator.stopAnimating()
+        Shield.isHidden = true
     }
 
 }

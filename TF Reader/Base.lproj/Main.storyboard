@@ -59,9 +59,41 @@
                                             </attributedString>
                                             <nil key="highlightedColor"/>
                                         </label>
+                                        <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="qHH-7c-2JG" userLabel="Cover">
+                                            <rect key="frame" x="0.0" y="0.0" width="375" height="201"/>
+                                            <subviews>
+                                                <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" style="whiteLarge" translatesAutoresizingMaskIntoConstraints="NO" id="tpp-I7-Ucx" userLabel="Activity">
+                                                    <rect key="frame" x="177" y="97" width="20" height="37"/>
+                                                </activityIndicatorView>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" layoutMarginsFollowReadableWidth="YES" text="Loading...." textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="T99-MX-CVF">
+                                                    <rect key="frame" x="142.5" y="56" width="89" height="24"/>
+                                                    <fontDescription key="fontDescription" name="Avenir-Black" family="Avenir" pointSize="17"/>
+                                                    <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                            </subviews>
+                                            <color key="backgroundColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
+                                            <constraints>
+                                                <constraint firstItem="T99-MX-CVF" firstAttribute="leading" secondItem="qHH-7c-2JG" secondAttribute="leading" constant="143" id="Efu-qQ-cQp"/>
+                                                <constraint firstAttribute="bottom" secondItem="tpp-I7-Ucx" secondAttribute="bottom" constant="67" id="XF7-xd-CDd"/>
+                                                <constraint firstAttribute="trailing" secondItem="tpp-I7-Ucx" secondAttribute="trailing" constant="178" id="XYx-hX-RrR"/>
+                                                <constraint firstAttribute="trailing" secondItem="T99-MX-CVF" secondAttribute="trailing" constant="143" id="jt0-QD-XEV"/>
+                                                <constraint firstItem="tpp-I7-Ucx" firstAttribute="top" secondItem="T99-MX-CVF" secondAttribute="bottom" constant="17" id="oiE-OD-7Jy"/>
+                                                <constraint firstItem="tpp-I7-Ucx" firstAttribute="leading" secondItem="qHH-7c-2JG" secondAttribute="leading" constant="177" id="tO2-Fn-A5S"/>
+                                                <constraint firstItem="T99-MX-CVF" firstAttribute="top" secondItem="qHH-7c-2JG" secondAttribute="top" constant="56" id="vbF-hi-sWY"/>
+                                            </constraints>
+                                        </view>
                                     </subviews>
+                                    <constraints>
+                                        <constraint firstAttribute="bottom" secondItem="qHH-7c-2JG" secondAttribute="bottom" constant="-1" id="5g5-AG-Ipv"/>
+                                        <constraint firstItem="qHH-7c-2JG" firstAttribute="top" secondItem="huP-NA-dhR" secondAttribute="top" id="JkA-xZ-FrV"/>
+                                        <constraint firstAttribute="trailing" secondItem="qHH-7c-2JG" secondAttribute="trailing" id="gvO-XG-Q2S"/>
+                                        <constraint firstItem="qHH-7c-2JG" firstAttribute="leading" secondItem="huP-NA-dhR" secondAttribute="leading" id="p3d-TW-k2j"/>
+                                    </constraints>
                                 </tableViewCellContentView>
                                 <connections>
+                                    <outlet property="Shield" destination="qHH-7c-2JG" id="GZd-Cw-T5Q"/>
+                                    <outlet property="activityIndicator" destination="tpp-I7-Ucx" id="BkB-70-es9"/>
                                     <outlet property="backgroundImage" destination="59M-2v-6Mc" id="aJi-zb-wNb"/>
                                     <outlet property="dateLabel" destination="ige-Aq-wwP" id="xob-lU-6QJ"/>
                                     <outlet property="titleLabel" destination="tev-5C-al0" id="isd-NJ-TCz"/>
@@ -134,7 +166,7 @@
                     <navigationBar key="navigationBar" contentMode="scaleToFill" misplaced="YES" id="vLp-Bl-V84">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
-                        <color key="barTintColor" red="1" green="0.27843137254901962" blue="0.58431372549019611" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <color key="barTintColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                         <textAttributes key="titleTextAttributes">
                             <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         </textAttributes>
