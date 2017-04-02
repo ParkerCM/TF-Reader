@@ -53,7 +53,7 @@
                                                 <fragment content="Title">
                                                     <attributes>
                                                         <font key="NSFont" size="20" name="Avenir-Heavy"/>
-                                                        <paragraphStyle key="NSParagraphStyle" alignment="justified" lineBreakMode="wordWrapping" baseWritingDirection="natural" tighteningFactorForTruncation="0.0"/>
+                                                        <paragraphStyle key="NSParagraphStyle" alignment="left" lineBreakMode="wordWrapping" baseWritingDirection="natural" tighteningFactorForTruncation="0.0"/>
                                                     </attributes>
                                                 </fragment>
                                             </attributedString>
@@ -163,7 +163,7 @@
             <objects>
                 <navigationController automaticallyAdjustsScrollViewInsets="NO" id="hN4-qu-g0d" sceneMemberID="viewController">
                     <toolbarItems/>
-                    <navigationBar key="navigationBar" contentMode="scaleToFill" misplaced="YES" id="vLp-Bl-V84">
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="vLp-Bl-V84">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <color key="barTintColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>

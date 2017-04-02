@@ -69,7 +69,7 @@ class TFTableViewController: UITableViewController, XMLParserDelegate {
     func parser(_ parser: XMLParser, didEndElement elementName: String, namespaceURI: String?, qualifiedName qName: String?) {
         if elementName == "item" {
             let blogPost: BlogPost = BlogPost()
-            blogPost.postTitle = postTitle
+            blogPost.postTitle = fixDateWithSpecialCharacters(title: postTitle)
             blogPost.postLink = postLink
             blogPost.postDate = postDate
             blogPosts.append(blogPost)
@@ -107,23 +107,14 @@ class TFTableViewController: UITableViewController, XMLParserDelegate {
         let styledDateText = styleDate(date: blogPost.postDate)
         cell.dateLabel.text = styledDateText
         
-        if self.imageLinks.count < 10{
+        if self.imageLinks.count < 10 {
             cell.isNotLoaded()
         } else {
             cell.isLoaded()
-            for i in blogPosts{
-                print(i.postTitle)
-            }
-            print("\n\n\n")
-            for i in storyTitles {
-                print(i)
-            }
-            print("\n\n\n\n")
         }
 
         while index < (self.imageLinks.count) {
             if blogPost.postTitle == self.storyTitles[index] {
-                print("The index is: \(index)")
                 blogPost.postImageLink = self.imageLinks[index]
                 blogPost.postContent = self.postContents[index]
                 index = 0
@@ -134,9 +125,7 @@ class TFTableViewController: UITableViewController, XMLParserDelegate {
         }
         
         if imageLinks.count != 0 {
-            print(blogPost.postImageLink)
             let imageLink = URL(string: blogPost.postImageLink)
-            print("Link: \(String(describing: imageLink))")
             
             if let hereIsTheLinkGoodSir = imageLink {
                 let data = try? Data(contentsOf: hereIsTheLinkGoodSir)
@@ -165,14 +154,14 @@ class TFTableViewController: UITableViewController, XMLParserDelegate {
         }
     }
 
-    // Date formatting
+    // String formatting
     
     func styleDate(date: String) -> String {
-        
         var newDate: String = String()
         let dayDict = ["Sun":"Sunday", "Mon":"Monday", "Tue":"Tuesday", "Wed":"Wednesday", "Thu":"Thursday", "Fri":"Friday", "Sat":"Saturday"]
         let monthDict = ["Jan":"January", "Feb":"February", "Mar":"March", "Apr":"April", "May":"May", "Jun":"June", "Jul":"July", "Aug":"August", "Sep":"September", "Oct":"October", "Nov":"November", "Dec":"December"]
-        let dayArray = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23", "24", "25", "26", "27", "28", "29", "30", "31"]
+        let dayNumDict = ["01":"1", "02":"2", "03":"3", "04":"4", "05":"5", "06":"6", "07":"7", "08":"8", "09":"9"]
+        let dayNumArray = ["10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23", "24", "25", "26", "27", "28", "29", "30", "31"]
         
         for i in dayDict {
             if date.contains(i.key) {
@@ -186,14 +175,63 @@ class TFTableViewController: UITableViewController, XMLParserDelegate {
             }
         }
         
-        for i in dayArray {
+        for i in dayNumDict {
+            if date.contains(" " + i.key + " ") {
+                newDate.append(" " + i.value)
+            }
+        }
+        
+        for i in dayNumArray {
             if date.contains(" " + i + " ") {
                 newDate.append(" " + i)
             }
         }
         
-        
         return newDate
+    }
+    
+    func fixDateWithSpecialCharacters(title: String) -> String {
+        let specChar1 = "‘"
+        let specChar2 = "“"
+        var newString: String = String()
+        
+        if title.contains(specChar1) || title.contains(specChar2) {
+            var strArray = Array(title.characters)
+            var singleIndices = [Int]()
+            var doubleIndices = [Int]()
+            var index = 0
+            let max = title.characters.count
+            
+            while index < max {
+                if strArray[index] == ("‘") {
+                    singleIndices.append(index)
+                    index += 1
+                } else if strArray[index] == ("“") {
+                    doubleIndices.append(index)
+                    index += 1
+                } else {
+                    index += 1
+                }
+            }
+            
+            if !singleIndices.isEmpty {
+                if singleIndices.count == 1 {
+                    print(strArray)
+                    strArray.insert(" ", at: singleIndices[0])
+                }
+            } else {
+                if doubleIndices.count == 1 {
+                    strArray.insert(" ", at: doubleIndices[0])
+                }
+            }
+            
+            for i in strArray {
+                newString.append(i)
+            }
+        } else {
+            newString = title
+        }
+        return newString
     }
     
     // Parse with Mercury API. Currently justs grabs the lead image url. Use Mercury instad of NSXML Parser in future?
@@ -248,9 +286,7 @@ class TFTableViewController: UITableViewController, XMLParserDelegate {
         let var7 = var6.replacingOccurrences(of: "feedproxy.google.com", with: "torrentfreak.com")
         
         
-        let finishedhtml = "<!DOCTYPE html><htm><head><style>body{background-image: url('http://i.imgur.com/ur6nqAJ.png');background-repeat: repeat-y;font-family: 'Avenir Black';}.entry-content img{display: block;margin: auto;width: auto;position: relative;overflow: visible;}p.entry-lead{font-weight: bold;}h1{text-align: center;}</style><h1>" + post.postTitle + "</h1>" + var7 + "</head></html>"
-        
-        print("Here is the replaced text: \(var6)")
+        let finishedhtml = "<!DOCTYPE html><htm><head><style>body{background-image: url('http://i.imgur.com/ur6nqAJ.png');background-repeat: repeat-y;font-family: 'Avenir Black';}.entry-content img{display: block;margin: auto;width: auto;position: relative;overflow: visible;border-radius: 8px;border: 1px solid #ddd;}p.entry-lead{font-weight: bold;}h1{text-align: center;}</style><h1>" + post.postTitle + "</h1>" + var7 + "</head></html>"
         
         return finishedhtml
     }
