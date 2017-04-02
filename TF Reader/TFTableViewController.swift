@@ -39,7 +39,8 @@ class TFTableViewController: UITableViewController, XMLParserDelegate {
         for i in blogPosts{
             parseWithMercury(articleLink: i.postLink)
         }
-        
+
+        print(blogPosts.count)
     }
     
     // NSXML Parsing methods
@@ -71,7 +72,7 @@ class TFTableViewController: UITableViewController, XMLParserDelegate {
             let blogPost: BlogPost = BlogPost()
             blogPost.postTitle = fixDateWithSpecialCharacters(title: postTitle)
             blogPost.postLink = postLink
-            blogPost.postDate = postDate
+            blogPost.postDate = styleDate(date: postDate)
             blogPosts.append(blogPost)
         }
     }
@@ -104,8 +105,7 @@ class TFTableViewController: UITableViewController, XMLParserDelegate {
         cell.titleLabel.text = blogPost.postTitle
         cell.titleLabel.numberOfLines = 0
         
-        let styledDateText = styleDate(date: blogPost.postDate)
-        cell.dateLabel.text = styledDateText
+        cell.dateLabel.text = blogPost.postDate
         
         if self.imageLinks.count < 10 {
             cell.isNotLoaded()
@@ -216,7 +216,6 @@ class TFTableViewController: UITableViewController, XMLParserDelegate {
             
             if !singleIndices.isEmpty {
                 if singleIndices.count == 1 {
-                    print(strArray)
                     strArray.insert(" ", at: singleIndices[0])
                 }
             } else {
