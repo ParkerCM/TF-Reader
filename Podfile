@@ -7,4 +7,6 @@ target 'TF Reader' do
     pod 'Alamofire', '~> 4.4'
     pod 'Kanna', '~> 2.1.0'
     pod 'SwiftyJSON'
+    pod 'SDWebImage', '~>3.8'
+    pod "MXParallaxHeader"
 end

@@ -1,18 +1,26 @@
 PODS:
   - Alamofire (4.4.0)
   - Kanna (2.1.1)
+  - MXParallaxHeader (0.6.1)
+  - SDWebImage (3.8.2):
+    - SDWebImage/Core (= 3.8.2)
+  - SDWebImage/Core (3.8.2)
   - SwiftyJSON (3.1.4)
 
 DEPENDENCIES:
   - Alamofire (~> 4.4)
   - Kanna (~> 2.1.0)
+  - MXParallaxHeader
+  - SDWebImage (~> 3.8)
   - SwiftyJSON
 
 SPEC CHECKSUMS:
   Alamofire: dc44b1600b800eb63da6a19039a0083d62a6a62d
   Kanna: 9b4b086c218703f2b94f5b21a466217dd2f9332e
+  MXParallaxHeader: 858c403532ed933b381556a81ce333d7065ad182
+  SDWebImage: 098e97e6176540799c27e804c96653ee0833d13c
   SwiftyJSON: c2842d878f95482ffceec5709abc3d05680c0220
 
-PODFILE CHECKSUM: 3b85ebe075ff62417d54a69659f95fea02f58a43
+PODFILE CHECKSUM: 3e76d920eb22577e70a6a37f6f3ad54d117850bf
 
 COCOAPODS: 1.2.0

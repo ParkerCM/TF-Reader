@@ -10,6 +10,7 @@ import UIKit
 import Alamofire
 import SwiftyJSON
 import Kanna
+import SDWebImage
 
 
 class TFTableViewController: UITableViewController, XMLParserDelegate {
@@ -26,6 +27,7 @@ class TFTableViewController: UITableViewController, XMLParserDelegate {
     var storyTitles = [String]()
     var imageLinks = [String]() // Remove this and append image urls to the blogpost class
     var postContents = [String]()
+    var timesRun = 0
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -35,12 +37,9 @@ class TFTableViewController: UITableViewController, XMLParserDelegate {
         parser.parse()
         self.tableView.isHidden = false
         setNavImage()
-        
         for i in blogPosts{
             parseWithMercury(articleLink: i.postLink)
         }
-
-        print(blogPosts.count)
     }
     
     // NSXML Parsing methods
@@ -70,7 +69,7 @@ class TFTableViewController: UITableViewController, XMLParserDelegate {
     func parser(_ parser: XMLParser, didEndElement elementName: String, namespaceURI: String?, qualifiedName qName: String?) {
         if elementName == "item" {
             let blogPost: BlogPost = BlogPost()
-            blogPost.postTitle = fixDateWithSpecialCharacters(title: postTitle)
+            blogPost.postTitle = fixTitleWithSpecialCharacters(title: postTitle)
             blogPost.postLink = postLink
             blogPost.postDate = styleDate(date: postDate)
             blogPosts.append(blogPost)
@@ -98,46 +97,13 @@ class TFTableViewController: UITableViewController, XMLParserDelegate {
     }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath) as! CustomTableViewCell
-        var index = 0
+        var cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath) as! CustomTableViewCell
         
         let blogPost: BlogPost = blogPosts[indexPath.row]
-        cell.titleLabel.text = blogPost.postTitle
-        cell.titleLabel.numberOfLines = 0
         
-        cell.dateLabel.text = blogPost.postDate
+        print(blogPost.postTitle)
         
-        if self.imageLinks.count < 10 {
-            cell.isNotLoaded()
-        } else {
-            cell.isLoaded()
-        }
-
-        while index < (self.imageLinks.count) {
-            if blogPost.postTitle == self.storyTitles[index] {
-                blogPost.postImageLink = self.imageLinks[index]
-                blogPost.postContent = self.postContents[index]
-                index = 0
-                break
-            } else {
-                index += 1
-            }
-        }
-        
-        if imageLinks.count != 0 {
-            let imageLink = URL(string: blogPost.postImageLink)
-            
-            if let hereIsTheLinkGoodSir = imageLink {
-                let data = try? Data(contentsOf: hereIsTheLinkGoodSir)
-                if data != nil {
-                    cell.backgroundImage.image = UIImage(data: data!)
-                }
-            }
-        } else {
-            print("Failed to use image link")
-            cell.backgroundImage.image = #imageLiteral(resourceName: "keyboard")
-            cell.backgroundImage.contentMode = UIViewContentMode.scaleAspectFill
-        }
+        cell = setUpTableView(cellObj: cell, postObj: blogPost)
         
         return cell
     }
@@ -186,19 +152,21 @@ class TFTableViewController: UITableViewController, XMLParserDelegate {
                 newDate.append(" " + i)
             }
         }
-        
+
         return newDate
     }
     
-    func fixDateWithSpecialCharacters(title: String) -> String {
+    func fixTitleWithSpecialCharacters(title: String) -> String {
         let specChar1 = "‘"
         let specChar2 = "“"
+        let specChar3 = "–"
         var newString: String = String()
         
-        if title.contains(specChar1) || title.contains(specChar2) {
+        if title.contains(specChar1) || title.contains(specChar2) || title.contains(specChar3) {
             var strArray = Array(title.characters)
             var singleIndices = [Int]()
             var doubleIndices = [Int]()
+            var hyphenIndices = [Int]()
             var index = 0
             let max = title.characters.count
             
@@ -209,6 +177,9 @@ class TFTableViewController: UITableViewController, XMLParserDelegate {
                 } else if strArray[index] == ("“") {
                     doubleIndices.append(index)
                     index += 1
+                } else if strArray[index] == ("–") {
+                    hyphenIndices.append(index)
+                    index += 1
                 } else {
                     index += 1
                 }
@@ -218,10 +189,10 @@ class TFTableViewController: UITableViewController, XMLParserDelegate {
                 if singleIndices.count == 1 {
                     strArray.insert(" ", at: singleIndices[0])
                 }
-            } else {
-                if doubleIndices.count == 1 {
-                    strArray.insert(" ", at: doubleIndices[0])
-                }
+            } else if doubleIndices.count == 1 {
+                strArray.insert(" ", at: doubleIndices[0])
+            } else if hyphenIndices.count == 1 {
+                strArray.insert(" ", at: hyphenIndices[0])
             }
             
             for i in strArray {
@@ -230,7 +201,18 @@ class TFTableViewController: UITableViewController, XMLParserDelegate {
         } else {
             newString = title
         }
+        
+        if newString.contains("  ") {
+            newString = fixDoubleSpace(title: newString)
+        }
+        
         return newString
+    }
+    
+    func fixDoubleSpace(title: String) -> String {
+        let checkedTitle = title.replacingOccurrences(of: "  ", with: " ")
+        
+        return checkedTitle
     }
     
     // Parse with Mercury API. Currently justs grabs the lead image url. Use Mercury instad of NSXML Parser in future?
@@ -285,13 +267,47 @@ class TFTableViewController: UITableViewController, XMLParserDelegate {
         let var7 = var6.replacingOccurrences(of: "feedproxy.google.com", with: "torrentfreak.com")
         
         
-        let finishedhtml = "<!DOCTYPE html><htm><head><style>body{background-image: url('http://i.imgur.com/ur6nqAJ.png');background-repeat: repeat-y;font-family: 'Avenir Black';}.entry-content img{display: block;margin: auto;width: auto;position: relative;overflow: visible;border-radius: 8px;border: 1px solid #ddd;}p.entry-lead{font-weight: bold;}h1{text-align: center;}</style><h1>" + post.postTitle + "</h1>" + var7 + "</head></html>"
+        let finishedhtml = "<!DOCTYPE html><html><head><style>body{background-image: url('http://i.imgur.com/ur6nqAJ.png');background-repeat: repeat-y;font-family: 'Avenir Black';}.entry-content img{display: block;margin: auto;width: auto;position: relative;overflow: visible;border-radius: 8px;border: 5px solid #ddd;}p.entry-lead{font-weight: bold;}h1{text-align: center;}h1{background: url('" + post.postImageLink + "');margin: 0;padding: 0;}</style><h1>" + post.postTitle + "</h1>" + var7 + "</head></html>"
         
         return finishedhtml
     }
     
     func setNavImage() -> Void {
         navigationItem.titleView = UIImageView(image: #imageLiteral(resourceName: "tfNavBar"))
+    }
+    
+    func setUpTableView(cellObj: CustomTableViewCell, postObj: BlogPost) -> CustomTableViewCell {
+        var index = 0
+        cellObj.titleLabel.text = postObj.postTitle
+        cellObj.titleLabel.numberOfLines = 0
+        
+        cellObj.dateLabel.text = postObj.postDate
+        
+        if self.imageLinks.count < 10 {
+            cellObj.isNotLoaded()
+        } else {
+            cellObj.isLoaded()
+        }
+        
+        while index < self.imageLinks.count {
+            if postObj.postTitle == self.storyTitles[index] {
+                postObj.postImageLink = self.imageLinks[index]
+                postObj.postContent = self.postContents[index]
+                break
+            } else {
+                index += 1
+            }
+        }
+        
+        if imageLinks.count != 0 {
+            let imageLink = URL(string: postObj.postImageLink)
+            cellObj.backgroundImage.sd_setImage(with: imageLink, placeholderImage: #imageLiteral(resourceName: "keyboard"))
+        } else {
+            cellObj.backgroundImage.image = #imageLiteral(resourceName: "keyboard")
+            cellObj.backgroundImage.contentMode = UIViewContentMode.scaleAspectFill
+        }
+        self.timesRun += 1
+        return cellObj
     }
 }
 
