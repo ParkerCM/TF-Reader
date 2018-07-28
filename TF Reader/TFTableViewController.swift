@@ -9,8 +9,8 @@
 import UIKit
 import Alamofire
 import SwiftyJSON
-import Kanna
 import SDWebImage
+import Fuzi
 
 
 class TFTableViewController: UITableViewController, XMLParserDelegate {
