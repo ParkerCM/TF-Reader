@@ -21,6 +21,7 @@ class CustomTableViewCell: UITableViewCell {
         
         titleLabel.textColor = UIColor(white: 1.00, alpha: 1.00)
         dateLabel.textColor = UIColor(white: 1.00, alpha: 1.00)
+        backgroundImage.contentMode = UIViewContentMode.scaleAspectFill
         //backgroundImage.image = #imageLiteral(resourceName: "keyboard")
     }
 

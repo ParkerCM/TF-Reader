@@ -8,74 +8,19 @@
 
 import UIKit
 import Alamofire
-import SwiftyJSON
 import SDWebImage
 import Fuzi
 
 
 class TFTableViewController: UITableViewController, XMLParserDelegate {
     
-    var parser: XMLParser = XMLParser()
     var blogPosts:[BlogPost] = []
-    var postTitle: String = String()
-    var postLink: String = String()
-    var postContent: String = String()
-    var eName: String = String()
-    var imageLink: String = String()
-    var postDate: String = String()
-    var storyTitle: String! = String()
-    var storyTitles = [String]()
-    var imageLinks = [String]() // Remove this and append image urls to the blogpost class
-    var postContents = [String]()
-    var timesRun = 0
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        let url: URL = URL(string: "https://feeds.feedburner.com/TorrentFreak/")!
-        parser = XMLParser(contentsOf: url)!
-        parser.delegate = self
-        parser.parse()
-        self.tableView.isHidden = false
-        setNavImage()
-        for i in blogPosts{
-            parseWithMercury(articleLink: i.postLink)
-        }
+        self.setNavImage()
+        self.scrapeTorrentFreak(pageNumber: 2)
     }
-    
-    // NSXML Parsing methods
-    
-    func parser(_ parser: XMLParser, didStartElement elementName: String, namespaceURI: String?, qualifiedName qName: String?, attributes attributeDict: [String : String]) {
-        eName = elementName
-        if elementName == "item" {
-            postTitle = String()
-            postLink = String()
-            postDate = String()
-        }
-    }
-    
-    func parser(_ parser: XMLParser, foundCharacters string: String) {
-        let data = string.trimmingCharacters(in: CharacterSet.whitespacesAndNewlines)
-        if(!data.isEmpty){
-            if eName == "title" {
-                postTitle += data
-            } else if eName == "link" {
-                postLink += data
-            } else if eName == "pubDate" {
-                postDate += data
-            }
-        }
-    }
-    
-    func parser(_ parser: XMLParser, didEndElement elementName: String, namespaceURI: String?, qualifiedName qName: String?) {
-        if elementName == "item" {
-            let blogPost: BlogPost = BlogPost()
-            blogPost.postTitle = fixTitleWithSpecialCharacters(title: postTitle)
-            blogPost.postLink = postLink
-            blogPost.postDate = styleDate(date: postDate)
-            blogPosts.append(blogPost)
-        }
-    }
-
     
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
@@ -97,13 +42,14 @@ class TFTableViewController: UITableViewController, XMLParserDelegate {
     }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        var cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath) as! CustomTableViewCell
-        
+        let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath) as! CustomTableViewCell
+        cell.isNotLoaded()
         let blogPost: BlogPost = blogPosts[indexPath.row]
         
-        print(blogPost.postTitle)
-        
-        cell = setUpTableView(cellObj: cell, postObj: blogPost)
+        cell.backgroundImage.sd_setImage(with: URL(string: blogPost.postImageLink))
+        cell.dateLabel.text = "January 31, 2018"
+        cell.titleLabel.text = blogPost.postTitle
+        cell.isLoaded()
         
         return cell
     }
@@ -117,142 +63,6 @@ class TFTableViewController: UITableViewController, XMLParserDelegate {
             let blogPost: BlogPost = blogPosts[selectedRow!]
             let viewController = segue.destination as! PostViewController
             viewController.postHTML = createHTMLForArticle(post: blogPost)
-        }
-    }
-
-    // String formatting
-    
-    func styleDate(date: String) -> String {
-        var newDate: String = String()
-        let dayDict = ["Sun":"Sunday", "Mon":"Monday", "Tue":"Tuesday", "Wed":"Wednesday", "Thu":"Thursday", "Fri":"Friday", "Sat":"Saturday"]
-        let monthDict = ["Jan":"January", "Feb":"February", "Mar":"March", "Apr":"April", "May":"May", "Jun":"June", "Jul":"July", "Aug":"August", "Sep":"September", "Oct":"October", "Nov":"November", "Dec":"December"]
-        let dayNumDict = ["01":"1", "02":"2", "03":"3", "04":"4", "05":"5", "06":"6", "07":"7", "08":"8", "09":"9"]
-        let dayNumArray = ["10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23", "24", "25", "26", "27", "28", "29", "30", "31"]
-        
-        for i in dayDict {
-            if date.contains(i.key) {
-                newDate.append(i.value + ", ")
-            }
-        }
-        
-        for i in monthDict {
-            if date.contains(i.key) {
-                newDate.append(i.value)
-            }
-        }
-        
-        for i in dayNumDict {
-            if date.contains(" " + i.key + " ") {
-                newDate.append(" " + i.value)
-            }
-        }
-        
-        for i in dayNumArray {
-            if date.contains(" " + i + " ") {
-                newDate.append(" " + i)
-            }
-        }
-
-        return newDate
-    }
-    
-    func fixTitleWithSpecialCharacters(title: String) -> String {
-        let specChar1 = "‘"
-        let specChar2 = "“"
-        let specChar3 = "–"
-        var newString: String = String()
-        
-        if title.contains(specChar1) || title.contains(specChar2) || title.contains(specChar3) {
-            var strArray = Array(title.characters)
-            var singleIndices = [Int]()
-            var doubleIndices = [Int]()
-            var hyphenIndices = [Int]()
-            var index = 0
-            let max = title.characters.count
-            
-            while index < max {
-                if strArray[index] == ("‘") {
-                    singleIndices.append(index)
-                    index += 1
-                } else if strArray[index] == ("“") {
-                    doubleIndices.append(index)
-                    index += 1
-                } else if strArray[index] == ("–") {
-                    hyphenIndices.append(index)
-                    index += 1
-                } else {
-                    index += 1
-                }
-            }
-            
-            if !singleIndices.isEmpty {
-                if singleIndices.count == 1 {
-                    strArray.insert(" ", at: singleIndices[0])
-                }
-            } else if doubleIndices.count == 1 {
-                strArray.insert(" ", at: doubleIndices[0])
-            } else if hyphenIndices.count == 1 {
-                strArray.insert(" ", at: hyphenIndices[0])
-            }
-            
-            for i in strArray {
-                newString.append(i)
-            }
-        } else {
-            newString = title
-        }
-        
-        if newString.contains("  ") {
-            newString = fixDoubleSpace(title: newString)
-        }
-        
-        return newString
-    }
-    
-    func fixDoubleSpace(title: String) -> String {
-        let checkedTitle = title.replacingOccurrences(of: "  ", with: " ")
-        
-        return checkedTitle
-    }
-    
-    // Parse with Mercury API. Currently justs grabs the lead image url. Use Mercury instad of NSXML Parser in future?
-    
-    func parseWithMercury(articleLink: String) -> Void {
-        var imageLink: String!
-        var postContent: String!
-        let url = URL(string: "https://mercury.postlight.com/parser?url=" + articleLink)
-        var mutableURL = URLRequest(url: url!)
-        mutableURL.setValue("application/json", forHTTPHeaderField: "Content-Type")
-        mutableURL.setValue("rEkcz83eU9RyuksZ1DejVTNGxeLlcQqTLVRcysDj", forHTTPHeaderField: "x-api-key")
-        
-        
-        Alamofire.request(mutableURL as URLRequestConvertible)
-            .responseJSON { response in
-                if response.result.isSuccess {
-                    if let value = response.result.value {
-                        let json = JSON(value)
-                        DispatchQueue.main.async {
-                            imageLink = json["lead_image_url"].string
-                            self.storyTitle = json["title"].string
-                            postContent = json["content"].string
-                            if imageLink != nil {
-                                self.storyTitles.append(self.storyTitle)
-                                self.imageLinks.append(imageLink)
-                                self.postContents.append(postContent)
-                            }
-                            else if imageLink == nil {
-                                print("Error trying to append image link in parseWithMercury()")
-                            }
-                            
-                            if self.imageLinks.count == 10 {
-                                self.tableView.reloadData()
-                            }
-                        }
-                    }
-                }
-                else if response.result.isFailure {
-                    print("Error: \(String(describing: response.error))")
-                }
         }
     }
     
@@ -276,38 +86,66 @@ class TFTableViewController: UITableViewController, XMLParserDelegate {
         navigationItem.titleView = UIImageView(image: #imageLiteral(resourceName: "tfNavBar"))
     }
     
-    func setUpTableView(cellObj: CustomTableViewCell, postObj: BlogPost) -> CustomTableViewCell {
-        var index = 0
-        cellObj.titleLabel.text = postObj.postTitle
-        cellObj.titleLabel.numberOfLines = 0
+    // New Methods
+    func scrapeTorrentFreak(pageNumber: Int = 0) -> Void {
+        var urlString = "https://www.torrentfreak.com/"
         
-        cellObj.dateLabel.text = postObj.postDate
-        
-        if self.imageLinks.count < 10 {
-            cellObj.isNotLoaded()
-        } else {
-            cellObj.isLoaded()
+        if pageNumber != 0 {
+            urlString += "page/\(pageNumber)"
         }
         
-        while index < self.imageLinks.count {
-            if postObj.postTitle == self.storyTitles[index] {
-                postObj.postImageLink = self.imageLinks[index]
-                postObj.postContent = self.postContents[index]
-                break
-            } else {
-                index += 1
+        Alamofire.request(urlString).responseString { response in
+            print("\(response.result.isSuccess)")
+            if let html = response.result.value {
+                self.parseHTML(html: html)
             }
         }
+    }
+    
+    func parseHTML(html: String) -> Void {
+        let html = html
+        let headerXPath = "//*[@id=\"main\"]/article/header/a/h1"
+        //let articleXpath = "//*[@id=\"main\"]/article/div/header/a/div[2]/h1"
+        let articleXpath = "//*[@id=\"main\"]/article/div/header/a"
+        var count = 1
         
-        if imageLinks.count != 0 {
-            let imageLink = URL(string: postObj.postImageLink)
-            cellObj.backgroundImage.sd_setImage(with: imageLink, placeholderImage: #imageLiteral(resourceName: "keyboard"))
-        } else {
-            cellObj.backgroundImage.image = #imageLiteral(resourceName: "keyboard")
-            cellObj.backgroundImage.contentMode = UIViewContentMode.scaleAspectFill
+        do {
+            let doc = try HTMLDocument(string: html, encoding: String.Encoding.utf8)
+            
+            let header = doc.xpath(headerXPath)
+            
+            for i in header {
+                print("Count: \(count): " + i.stringValue)
+                count += 1
+            }
+            
+            let subArticles = doc.xpath(articleXpath)
+            
+            for i in subArticles {
+                let post = BlogPost()
+                post.postTitle = i.children[1].children[0].stringValue
+                post.postLink = "https://www.torrentfreak.com" + i.attr("href")!
+                
+                let imageLink = i.children[0].attr("style")!
+                let imageLinkStartIndex = imageLink.index(imageLink.startIndex, offsetBy: 23)
+                let imageLinkEndIndex = imageLink.index(imageLink.endIndex, offsetBy: -2)
+                let subImageLink = imageLink[imageLinkStartIndex..<imageLinkEndIndex]
+                post.postImageLink = "https://www.torrentfreak.com" + subImageLink
+                
+                // fuck me
+                post.postContent = "There is soe text for post onfds"
+                
+                self.blogPosts.append(post)
+                //print("Count: \(count): " + post.postTitle + post.postLink + post.postImageLink)
+                count += 1
+            }
+            
+            self.tableView.reloadData()
+            print("the count of posts is \(self.blogPosts.count)")
+
+        } catch let error {
+            print(error)
         }
-        self.timesRun += 1
-        return cellObj
     }
 }
 
