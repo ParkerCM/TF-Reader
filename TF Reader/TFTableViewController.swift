@@ -9,7 +9,7 @@
 import UIKit
 import Alamofire
 import SwiftyJSON
-import Kanna
+import Fuzi
 
 
 class TFTableViewController: UITableViewController, XMLParserDelegate {
