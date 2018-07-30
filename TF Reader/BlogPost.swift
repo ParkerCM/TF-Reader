@@ -14,4 +14,5 @@ class BlogPost {
     var postDate: String = String()
     var postContent: String = String()
     var postImageLink: String = String()
+    var postTimeStamp: Int = Int()
 }
