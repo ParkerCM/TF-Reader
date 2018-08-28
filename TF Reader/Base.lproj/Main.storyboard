@@ -9,7 +9,7 @@
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
-        <!--Home-->
+        <!--Latest-->
         <scene sceneID="WcH-ua-yXE">
             <objects>
                 <tableViewController id="8M5-uc-8nl" customClass="TFTableViewController" customModule="TF_Reader" customModuleProvider="target" sceneMemberID="viewController">
@@ -45,7 +45,7 @@
                                             </attributedString>
                                             <nil key="highlightedColor"/>
                                         </label>
-                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="bottom" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" usesAttributedText="YES" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="tev-5C-al0" userLabel="Title">
+                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="bottom" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" usesAttributedText="YES" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="tev-5C-al0" userLabel="Title">
                                             <rect key="frame" x="8" y="114" width="359" height="62"/>
                                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                             <attributedString key="attributedText">
@@ -105,8 +105,8 @@
                             <outlet property="delegate" destination="8M5-uc-8nl" id="l8X-AJ-Pdo"/>
                         </connections>
                     </tableView>
-                    <navigationItem key="navigationItem" title="Home" id="Ydy-It-1Hj" userLabel="Home">
-                        <barButtonItem key="backBarButtonItem" title="Home" id="7jf-7a-oxb"/>
+                    <navigationItem key="navigationItem" title="Latest" id="Ydy-It-1Hj" userLabel="Home">
+                        <barButtonItem key="backBarButtonItem" title="Latest" id="7jf-7a-oxb"/>
                     </navigationItem>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="QRr-xg-4ka" userLabel="First Responder" sceneMemberID="firstResponder"/>

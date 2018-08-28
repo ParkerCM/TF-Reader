@@ -123,21 +123,17 @@ class TFTableViewController: UITableViewController {
             
             // If header is not empty then the page has one. Only the first page has a header
             if (header.count != 0) {
+                // Get post title link and date
                 let post = BlogPost()
                 post.postTitle = header[0].children[0].stringValue
                 post.postLink = "https://www.torrentfreak.com" + header[0].attr("href")!
                 post.postDate = (header[0].nextSibling?.nextSibling?.children[1].children[0].stringValue)!
                 
-                var timeStamp = header[0].nextSibling?.nextSibling?.children[1].children[0].attr("datetime")
-                let timeStampSub = timeStamp?.prefix(19)
-                timeStamp = String(timeStampSub!)
-                timeStamp = timeStamp?.replacingOccurrences(of: "-", with: "")
-                timeStamp = timeStamp?.replacingOccurrences(of: ":", with: "")
-                timeStamp = timeStamp?.replacingOccurrences(of: "T", with: "")
-                post.postTimeStamp = Int(timeStamp!)!
+                // Get the time stamp
+                let timeStamp = header[0].nextSibling?.nextSibling?.children[1].children[0].attr("datetime")
+                post.postTimeStamp = self.getArticleTimeStamp(timeStamp: timeStamp!)
 
-                
-                
+                // Get the link to the leading image for the page
                 header = doc.xpath(headerImageXPath)
                 let imageLink = header[0].attr("style")!
                 let imageLinkStartIndex = imageLink.index(imageLink.startIndex, offsetBy: 23)
@@ -149,7 +145,7 @@ class TFTableViewController: UITableViewController {
                 
                 self.blogPosts.append(post)
             }
-            
+            // All the non header articles
             let subArticles = doc.xpath(articleXpath)
             
             for i in subArticles {
@@ -158,14 +154,9 @@ class TFTableViewController: UITableViewController {
                 post.postLink = "https://www.torrentfreak.com" + i.attr("href")!
                 post.postDate = (i.nextSibling?.nextSibling?.children[1].children[0].stringValue)!
                 
-                var timeStamp = i.nextSibling?.nextSibling?.children[1].children[0].attr("datetime")
-                let timeStampSub = timeStamp?.prefix(19)
-                timeStamp = String(timeStampSub!)
-                timeStamp = timeStamp?.replacingOccurrences(of: "-", with: "")
-                timeStamp = timeStamp?.replacingOccurrences(of: ":", with: "")
-                timeStamp = timeStamp?.replacingOccurrences(of: "T", with: "")
-                post.postTimeStamp = Int(timeStamp!)!
-                
+                // Get the time stamp
+                let timeStamp = i.nextSibling?.nextSibling?.children[1].children[0].attr("datetime")
+                post.postTimeStamp = self.getArticleTimeStamp(timeStamp: timeStamp!)
                 
                 let imageLink = i.children[0].attr("style")!
                 let imageLinkStartIndex = imageLink.index(imageLink.startIndex, offsetBy: 23)
@@ -186,6 +177,7 @@ class TFTableViewController: UITableViewController {
         }
     }
     
+    // Sorts the blog posts based on date
     func sortBlogPosts() -> Void {
         var count = 0
         
@@ -201,12 +193,18 @@ class TFTableViewController: UITableViewController {
         self.blogPosts.reverse()
         
         if self.blogPosts.count == 41 {
-            for i in self.blogPosts {
-                print(i.postTimeStamp)
-            }
+            self.tableView.reloadData()
         }
-        
     }
     
+    // Method for getting the time stamp of an article
+    func getArticleTimeStamp(timeStamp: String) -> Int {
+        let timeStampSub = timeStamp.prefix(19)
+        var newTimeStamp = String(timeStampSub)
+        newTimeStamp = newTimeStamp.replacingOccurrences(of: "-", with: "")
+        newTimeStamp = newTimeStamp.replacingOccurrences(of: ":", with: "")
+        newTimeStamp = newTimeStamp.replacingOccurrences(of: "T", with: "")
+        return Int(newTimeStamp)!
+    }
 }
 
